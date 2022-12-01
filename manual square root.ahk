@@ -5,8 +5,6 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-#Include Vec2.ahk ; from https://www.autohotkey.com/boards/viewtopic.php?t=89290
-
 InputBox, input, , Please enter any number., , 185, 125 ; only supports integers
 InputBox, iterations, , Please enter how many decimal places the result should have., , 380, 125
 
@@ -43,21 +41,24 @@ doIteration(i, remPrev, ByRef fR) {
 }
 
 
-setFloatFormat(dp) {
-  Switch dp {
-	Case 1:
+setFloatFormat(dp) { ; when I try to use switch, it errors
+	if (dp == 1)
 		SetFormat, Float, 0.1
-	Case 2:
-		SetFormat, Float, 0.2 
-	Case 3:
-		SetFormat, Float, 0.3 
-	Case 4:
-		SetFormat, Float, 0.4 
-	Case 5:
+	else if (dp == 2)
+		SetFormat, Float, 0.2
+	else if (dp == 3)
+		SetFormat, Float, 0.3
+	else if (dp == 4)
+		SetFormat, Float, 0.4
+	else if (dp == 5)
 		SetFormat, Float, 0.5
-	Default:
-		SetFormat, Float, 0.6
-  }
+	else if (dp == 7)
+		SetFormat, Float, 0.7
+	else if (dp == 8)
+		SetFormat, Float, 0.8
+	else if (dp == 9)
+		SetFormat, Float, 0.9
+	else SetFormat, Float, 0.6
 }
 
 isInt？(input) { ; if input is any number of digits, a decimal point and 2 to * zeros
@@ -75,12 +76,19 @@ checkWeirdFormula(double, max) { ; 12_ * _ <= 200
 	While (i <= 9) {		
 		res := (double + i) * i 				; 12i * i <= 200 ; 122i * i <= 7900 (just the first 2 iterations as shown in the video)
 		If (res <= max) {
-			resVec := New HB_Vector(res,  i) 	; for returning res as well as i
+			resVec := New Vec2(res,  i) 			; for returning res as well as i
 			resList.Push(resVec)
 		}
 		i := i + 1
 	}
 	
-	lastVec := resList[resList.MaxIndex()] 		; i only want the highest result that is still smaller than max
+	lastVec := resList[resList.MaxIndex()] 				; i only want the highest result that is still smaller than max
 	return lastVec
+}
+
+Class Vec2 {
+	__New(x ,y){
+		This.X:=x
+		This.Y:=y
+	}
 }
